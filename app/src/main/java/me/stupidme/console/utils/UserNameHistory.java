@@ -9,46 +9,46 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by allen on 18-3-25.
  */
 
-public class UserNameAutoCompleteManager {
+public class UserNameHistory {
 
     private String mUserNamesFileName = "user_auto_complete_names.txt";
 
-    private static volatile UserNameAutoCompleteManager sInstance;
+    private static volatile UserNameHistory sInstance;
 
-    private UserNameAutoCompleteManager() {
+    private UserNameHistory() {
 
     }
 
-    public static UserNameAutoCompleteManager getInstance() {
+    public static UserNameHistory getInstance() {
         if (sInstance == null) {
-            synchronized (UserNameAutoCompleteManager.class) {
+            synchronized (UserNameHistory.class) {
                 if (sInstance == null) {
-                    sInstance = new UserNameAutoCompleteManager();
+                    sInstance = new UserNameHistory();
                 }
             }
         }
         return sInstance;
     }
 
-    public List<String> getHistoryUserNames(Context context) {
-        List<String> list = new LinkedList<>();
+    public Set<String> getHistoryUserNames(Context context) {
+        Set<String> set = new TreeSet<>();
         try (FileInputStream fis = context.openFileInput(mUserNamesFileName);
              BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                list.add(line.trim());
+                set.add(line.trim());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return list;
+        return set;
     }
 
     public void addUserName(Context context, String name) {
