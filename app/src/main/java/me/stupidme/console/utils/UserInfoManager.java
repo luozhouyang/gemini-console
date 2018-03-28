@@ -17,7 +17,8 @@ public class UserInfoManager {
 
     private SharedPreferences mSharedPreference;
 
-    private String mKey;
+    //TODO(luozhouyang) dynamic set key by pop a dialog.
+    private String mKey = "0123456789abcefghijklmno";
 
     private UserInfoManager() {
         mSharedPreference = mContextRef.get().getSharedPreferences("user_info", Context.MODE_PRIVATE);
@@ -59,11 +60,11 @@ public class UserInfoManager {
 
     public void setUserName(String name) {
         String s = SecurityUtil.encryptDES(name, mKey);
-        mSharedPreference.edit().putString("user_name", s).apply();
+        mSharedPreference.edit().putString("user_name", s).commit();
     }
 
     public void setPassword(String password) {
         String s = SecurityUtil.encryptDES(password, mKey);
-        mSharedPreference.edit().putString("password", s).apply();
+        mSharedPreference.edit().putString("password", s).commit();
     }
 }
