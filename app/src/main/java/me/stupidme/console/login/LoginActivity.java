@@ -73,7 +73,8 @@ public class LoginActivity extends AppCompatActivity {
                 String username = mUserNameView.getText().toString();
                 String password = mPasswordView.getText().toString();
                 UserNameHistory.getInstance()
-                        .addUserName(LoginActivity.this, username);
+                        .addUserName(username)
+                        .commit(LoginActivity.this);
                 UserInfoManager manager = UserInfoManager.getInstance();
                 if (manager != null) {
                     manager.setUserName(username);

@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,6 +22,8 @@ public class UserNameHistory {
     private String mUserNamesFileName = "user_auto_complete_names.txt";
 
     private static volatile UserNameHistory sInstance;
+
+    private Set<String> mTempUserNameSet = new HashSet<>(2);
 
     private UserNameHistory() {
 
@@ -51,11 +54,20 @@ public class UserNameHistory {
         return set;
     }
 
-    public void addUserName(Context context, String name) {
-        try (FileOutputStream fos = context.openFileOutput(mUserNamesFileName, Context.MODE_APPEND);
+    public UserNameHistory addUserName(String name) {
+        mTempUserNameSet.add(name);
+        return this;
+    }
+
+    public void commit(Context context) {
+        mTempUserNameSet.addAll(getHistoryUserNames(context));
+        try (FileOutputStream fos = context.openFileOutput(mUserNamesFileName, Context.MODE_PRIVATE);
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
-            writer.write(name);
-            writer.newLine();
+            for (String name : mTempUserNameSet) {
+                writer.write(name);
+                writer.newLine();
+            }
+            mTempUserNameSet.clear();
         } catch (IOException e) {
             e.printStackTrace();
         }
