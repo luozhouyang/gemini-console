@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,26 +18,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import me.stupidme.console.MainActivity;
 import me.stupidme.console.R;
-import me.stupidme.console.utils.LoggerProxy;
+import me.stupidme.console.utils.UserInfoManager;
 import me.stupidme.console.utils.UserNameHistory;
-import me.stupidme.stupidhttp.HttpRequest;
-import me.stupidme.stupidhttp.RequestCallback;
-import me.stupidme.stupidhttp.StupidHttp;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private UserLoginTask mAuthTask = null;
     private AutoCompleteTextView mUserNameView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private LoginPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,20 +66,35 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mAuthTask != null) {
-            mAuthTask.cancel(true);
-        }
+        mPresenter = new LoginPresenterImpl(new LoginView() {
+            @Override
+            public void loginSuccess() {
+                String username = mUserNameView.getText().toString();
+                String password = mPasswordView.getText().toString();
+                UserNameHistory.getInstance()
+                        .addUserName(LoginActivity.this, username);
+                UserInfoManager manager = UserInfoManager.getInstance();
+                if (manager != null) {
+                    manager.setUserName(username);
+                    manager.setPassword(password);
+                }
+                showProgress(false);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                LoginActivity.this.finish();
+            }
+
+            @Override
+            public void loginFailed() {
+                showProgress(false);
+                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
+        }, new LoginModelImpl());
     }
 
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mUserNameView.setError(null);
@@ -122,9 +133,8 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            UserNameHistory.getInstance().addUserName(this, username);
-            mAuthTask = new UserLoginTask(this, username, password);
-            mAuthTask.execute((Void) null);
+            //TODO(luozhouyang) do not request login again if a previous login request is running
+            mPresenter.login(username, password);
         }
     }
 
@@ -180,77 +190,5 @@ public class LoginActivity extends AppCompatActivity {
         mUserNameView.setAdapter(adapter);
     }
 
-    public static class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-        private final String mUserName;
-        private final String mPassword;
-        private WeakReference<LoginActivity> mContextRef;
-
-        UserLoginTask(LoginActivity activity, String username, String password) {
-            mContextRef = new WeakReference<>(activity);
-            mUserName = username;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            final Boolean[] success = {false};
-            UserInfoItem infoItem = new UserInfoItem(mUserName, mPassword);
-            HttpRequest request = new HttpRequest.Builder()
-                    .method("POST")
-                    .url("http://127.0.0.1:80/login")
-                    .postRequestForm(infoItem)
-                    .build();
-            RequestCallback callback = new RequestCallback() {
-                @Override
-                public void onException(Exception e) {
-                    LoggerProxy.e(UserLoginTask.class.getCanonicalName(), e.getMessage());
-                    success[0] = false;
-                }
-
-                @Override
-                public void onSuccess(String response) {
-                    success[0] = true;
-                }
-            };
-            StupidHttp.getInstance().go(request, callback);
-            //always return true just for test.
-            return true;
-//            return success[0];
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            if (mContextRef == null) {
-                return;
-            }
-            LoginActivity activity = mContextRef.get();
-            if (activity == null) {
-                return;
-            }
-            activity.mAuthTask = null;
-            activity.showProgress(false);
-            if (success) {
-                Intent intent = new Intent(activity, MainActivity.class);
-                activity.startActivity(intent);
-                activity.finish();
-            } else {
-                activity.mPasswordView.setError(activity.getString(R.string.error_incorrect_password));
-                activity.mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            if (mContextRef == null) {
-                return;
-            }
-            LoginActivity activity = mContextRef.get();
-            if (activity == null) {
-                return;
-            }
-            activity.mAuthTask = null;
-            activity.showProgress(false);
-        }
-    }
 }
 
