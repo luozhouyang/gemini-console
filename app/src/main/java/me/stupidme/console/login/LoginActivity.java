@@ -1,4 +1,4 @@
-package me.stupidme.console;
+package me.stupidme.console.login;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -24,7 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import me.stupidme.console.MainActivity;
+import me.stupidme.console.R;
+import me.stupidme.console.utils.LoggerProxy;
 import me.stupidme.console.utils.UserNameHistory;
+import me.stupidme.stupidhttp.HttpRequest;
+import me.stupidme.stupidhttp.RequestCallback;
+import me.stupidme.stupidhttp.StupidHttp;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -54,8 +60,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -167,8 +173,7 @@ public class LoginActivity extends AppCompatActivity {
     private void addUserNamesToAutoComplete() {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         Set<String> names = UserNameHistory.getInstance().getHistoryUserNames(this);
-        List<String> list = new ArrayList<>();
-        list.addAll(names);
+        List<String> list = new ArrayList<>(names);
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, list);
@@ -188,15 +193,29 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            //TODO(luozhouyang) login
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (mUserName.isEmpty() || mPassword.isEmpty())
-                return false;
+            final Boolean[] success = {false};
+            UserInfoItem infoItem = new UserInfoItem(mUserName, mPassword);
+            HttpRequest request = new HttpRequest.Builder()
+                    .method("POST")
+                    .url("http://127.0.0.1:80/login")
+                    .postRequestForm(infoItem)
+                    .build();
+            RequestCallback callback = new RequestCallback() {
+                @Override
+                public void onException(Exception e) {
+                    LoggerProxy.e(UserLoginTask.class.getCanonicalName(), e.getMessage());
+                    success[0] = false;
+                }
+
+                @Override
+                public void onSuccess(String response) {
+                    success[0] = true;
+                }
+            };
+            StupidHttp.getInstance().go(request, callback);
+            //always return true just for test.
             return true;
+//            return success[0];
         }
 
         @Override
