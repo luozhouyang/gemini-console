@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/activity_main_bottom_android"
+        android:icon="@drawable/ic_android_white_24dp"
+        android:title="@string/activity_main_bottom_item_text_android"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/activity_main_bottom_go"
+        android:icon="@drawable/ic_android_white_24dp"
+        android:title="@string/activity_main_bottom_item_text_android"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/activity_main_bottom_java"
+        android:icon="@drawable/ic_android_white_24dp"
+        android:title="@string/activity_main_bottom_item_text_android"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/activity_main_bottom_python"
+        android:icon="@drawable/ic_android_white_24dp"
+        android:title="@string/activity_main_bottom_item_text_android"
+        android:enabled="false"
+        app:showAsAction="ifRoom" />
+</menu>
