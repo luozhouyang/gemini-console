@@ -32,7 +32,7 @@ public class SecurityUtil {
                 | InvalidKeyException | InvalidKeySpecException
                 | BadPaddingException | IllegalBlockSizeException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            LoggerProxy.e(UserInfoManager.class.getCanonicalName(),
+            LoggerProxy.e(SecurityUtil.class.getCanonicalName(),
                     "Error occurs when encrypt key.\n" + e.getMessage());
             return "";
         }
@@ -49,7 +49,7 @@ public class SecurityUtil {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException
                 | BadPaddingException | IllegalBlockSizeException
                 | InvalidKeyException | InvalidKeySpecException | UnsupportedEncodingException e) {
-            LoggerProxy.w(UserInfoManager.class.getCanonicalName(),
+            LoggerProxy.w(SecurityUtil.class.getCanonicalName(),
                     "Error occurs when decrypt key.\n" + e.getMessage());
             return "";
         }

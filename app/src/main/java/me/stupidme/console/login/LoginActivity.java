@@ -24,7 +24,8 @@ import java.util.Set;
 
 import me.stupidme.console.MainActivity;
 import me.stupidme.console.R;
-import me.stupidme.console.utils.UserInfoManager;
+import me.stupidme.console.account.Account;
+import me.stupidme.console.account.AccountManagerImpl;
 import me.stupidme.console.utils.UserNameHistory;
 
 public class LoginActivity extends AppCompatActivity {
@@ -75,11 +76,8 @@ public class LoginActivity extends AppCompatActivity {
                 UserNameHistory.getInstance()
                         .addUserName(username)
                         .commit(LoginActivity.this);
-                UserInfoManager manager = UserInfoManager.getInstance();
-                if (manager != null) {
-                    manager.setUserName(username);
-                    manager.setPassword(password);
-                }
+                AccountManagerImpl.getInstance().setAccount(LoginActivity.this,
+                        new Account(username, password));
                 showProgress(false);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
