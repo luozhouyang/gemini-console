@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:name=".ConsoleApplication"
         android:allowBackup="true"
@@ -21,7 +20,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".login.LoginActivity"
-            android:label="@string/title_activity_login">
+            android:label="@string/title_activity_login"></activity>
+        <activity
+            android:name=".login.SplashActivity"
+            android:label="@string/Console">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

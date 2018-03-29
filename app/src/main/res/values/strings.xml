@@ -21,4 +21,5 @@
     <string name="activity_main_bottom_item_text_go">Golang</string>
     <string name="activity_main_bottom_item_text_java">Java</string>
     <string name="activity_main_bottom_item_text_python">Python</string>
+    <string name="Console">Console</string>
 </resources>
