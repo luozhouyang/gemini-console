@@ -22,4 +22,7 @@
     <string name="activity_main_bottom_item_text_java">Java</string>
     <string name="activity_main_bottom_item_text_python">Python</string>
     <string name="Console">Console</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
