@@ -1,9 +1,11 @@
-package me.stupidme.console;
+package me.stupidme.console.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,8 +14,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import me.stupidme.console.R;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private AndroidArticleFragment mAndroidFragment;
+    private GolangArticleFragment mGolangFragment;
+    private JavaArticleFragment mJavaFragment;
+    private PythonArticleFragment mPythonFragment;
+    private FragmentManager mFragmentManager;
+    private Fragment mCurrentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,28 +42,63 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mFragmentManager = getSupportFragmentManager();
+        mAndroidFragment = new AndroidArticleFragment();
+        mFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, mAndroidFragment)
+                .commit();
+        mCurrentFragment = mAndroidFragment;
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_nav);
+        bottomNavigationView.setSelectedItemId(0);
+        bottomNavigationView.getMenu().getItem(3).setEnabled(true);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.activity_main_bottom_android:
-
+                        if (mAndroidFragment == null) {
+                            mAndroidFragment = new AndroidArticleFragment();
+                        }
+                        switchFragment(mAndroidFragment);
                         break;
                     case R.id.activity_main_bottom_go:
-
+                        if (mGolangFragment == null) {
+                            mGolangFragment = new GolangArticleFragment();
+                        }
+                        switchFragment(mGolangFragment);
                         break;
                     case R.id.activity_main_bottom_java:
-
+                        if (mJavaFragment == null) {
+                            mJavaFragment = new JavaArticleFragment();
+                        }
+                        switchFragment(mJavaFragment);
                         break;
                     case R.id.activity_main_bottom_python:
-
+                        if (mPythonFragment == null) {
+                            mPythonFragment = new PythonArticleFragment();
+                        }
+                        switchFragment(mPythonFragment);
                         break;
                 }
                 return true;
             }
         });
     }
+
+    private void switchFragment(Fragment to) {
+        if (!to.isAdded()) {
+            mFragmentManager.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .add(R.id.fragment_container, to)
+                    .commit();
+        }
+        mFragmentManager.beginTransaction()
+                .hide(mCurrentFragment)
+                .show(to)
+                .commit();
+        mCurrentFragment = to;
+    }
+
 
     @Override
     public void onBackPressed() {

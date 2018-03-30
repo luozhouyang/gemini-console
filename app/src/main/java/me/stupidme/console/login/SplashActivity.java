@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import me.stupidme.console.MainActivity;
+import me.stupidme.console.main.MainActivity;
 import me.stupidme.console.R;
 import me.stupidme.console.account.Account;
 import me.stupidme.console.account.AccountManager;

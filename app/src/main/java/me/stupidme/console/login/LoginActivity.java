@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import me.stupidme.console.MainActivity;
+import me.stupidme.console.main.MainActivity;
 import me.stupidme.console.R;
 import me.stupidme.console.account.Account;
 import me.stupidme.console.account.AccountManagerImpl;
