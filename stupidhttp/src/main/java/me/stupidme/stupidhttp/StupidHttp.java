@@ -31,7 +31,7 @@ public class StupidHttp {
         return StupidHttpHolder.INSTANCE;
     }
 
-    public void go(HttpRequest request, RequestCallback callback) {
-        mThreadPool.submit(new HttpRunnable(request, callback));
+    public void go(Request request, RequestCallback callback) {
+        mThreadPool.submit(new RequestRunnable(request, callback));
     }
 }
