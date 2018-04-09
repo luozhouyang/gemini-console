@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -132,8 +131,8 @@ public class HttpRequest {
         private String url = "";
         private Map<String, String> getRequestParams;
         private Map<String, String> postRequestForm;
-        private HttpGetParams params;
-        private HttpPostForm form;
+        private URLForm params;
+        private PostForm form;
 
         public Builder() {
 
@@ -164,7 +163,7 @@ public class HttpRequest {
             return this;
         }
 
-        public Builder getRequestParams(HttpGetParams params) {
+        public Builder getRequestParams(URLForm params) {
             this.params = params;
             return this;
         }
@@ -174,7 +173,7 @@ public class HttpRequest {
             return this;
         }
 
-        public Builder postRequestForm(HttpPostForm form) {
+        public Builder postRequestForm(PostForm form) {
             this.form = form;
             return this;
         }
@@ -189,7 +188,7 @@ public class HttpRequest {
                 request.mGetRequestParams = new HashMap<>(4);
             }
             if (this.params != null) {
-                request.mGetRequestParams.putAll(this.params.parseParams());
+                request.mGetRequestParams.putAll(this.params.pairs());
             }
             if (this.getRequestParams != null) {
                 request.mGetRequestParams.putAll(this.getRequestParams);
@@ -198,7 +197,7 @@ public class HttpRequest {
                 request.mPostRequestForm = new HashMap<>(8);
             }
             if (this.form != null) {
-                request.mPostRequestForm.putAll(this.form.parseForm());
+                request.mPostRequestForm.putAll(this.form.pairs());
             }
             if (this.postRequestForm != null) {
                 request.mPostRequestForm.putAll(this.postRequestForm);

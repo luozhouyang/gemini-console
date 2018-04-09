@@ -6,7 +6,7 @@ import java.util.Map;
  * Created by allen on 18-3-27.
  */
 
-public interface HttpPostForm {
+public interface URLForm extends EncodingForm{
 
-    Map<String, String> parseForm();
+    Map<String,String> pairs();
 }

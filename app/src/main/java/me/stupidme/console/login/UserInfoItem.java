@@ -4,12 +4,12 @@ import android.util.ArrayMap;
 
 import java.util.Map;
 
-import me.stupidme.stupidhttp.HttpPostForm;
+import me.stupidme.stupidhttp.PostForm;
 
 /**
  * Created by allen on 18-3-28.
  */
-public class UserInfoItem implements HttpPostForm {
+public class UserInfoItem implements PostForm {
 
     private String username;
     private String password;
@@ -20,7 +20,7 @@ public class UserInfoItem implements HttpPostForm {
     }
 
     @Override
-    public Map<String, String> parseForm() {
+    public Map<String, String> pairs() {
         Map<String, String> map = new ArrayMap<>(2);
         map.put("username", username);
         map.put("password", password);
