@@ -12,7 +12,7 @@ import java.net.URL;
  */
 public class PostRequest extends Request {
 
-    private String postForm;
+    private PostForm mForm;
 
     public PostRequest(String url) {
         super(url);
@@ -20,20 +20,12 @@ public class PostRequest extends Request {
 
     public PostRequest(String url, PostForm form) {
         super(url);
-        postForm = FormBuilder.buildPostForm(form);
+        mForm = form;
     }
 
     public PostRequest(String url, PostForm form, int readTimeout, int connectTimeout) {
         super(url, readTimeout, connectTimeout);
-        postForm = FormBuilder.buildPostForm(form);
-    }
-
-    public String getPostForm() {
-        return postForm;
-    }
-
-    public void setPostForm(String postForm) {
-        this.postForm = postForm;
+        mForm = form;
     }
 
     @Override
@@ -43,11 +35,12 @@ public class PostRequest extends Request {
         connection.setReadTimeout(getReadTimeout());
         connection.setConnectTimeout(getConnectTimeout());
         connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", mForm.encoding() + ";charset=utf-8");
         connection.setDoInput(true);
         connection.setDoOutput(true);
         OutputStream outputStream = connection.getOutputStream();
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-        writer.write(postForm);
+        writer.write(FormBuilder.buildPostForm(mForm));
         writer.flush();
         writer.close();
         outputStream.close();

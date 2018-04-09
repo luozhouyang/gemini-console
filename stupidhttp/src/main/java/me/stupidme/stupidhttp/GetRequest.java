@@ -9,7 +9,7 @@ import java.net.URL;
  */
 public class GetRequest extends Request {
 
-    private String urlForm;
+    private URLForm mForm;
 
     public GetRequest(String url) {
         super(url);
@@ -17,25 +17,22 @@ public class GetRequest extends Request {
 
     public GetRequest(String url, URLForm form) {
         super(url);
-        urlForm = FormBuilder.buildURLForm(form);
+        mForm = form;
     }
 
     public GetRequest(String url, URLForm form, int readTimeout, int connectTimeout) {
         super(url, readTimeout, connectTimeout);
-        urlForm = FormBuilder.buildURLForm(form);
-    }
-
-    public String getUrlForm() {
-        return urlForm;
+        mForm = form;
     }
 
     @Override
     public HttpURLConnection getConnection() throws IOException {
-        URL url = new URL(getUrl() + urlForm);
+        URL url = new URL(getUrl() + FormBuilder.buildURLForm(mForm));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setReadTimeout(getReadTimeout());
         connection.setConnectTimeout(getConnectTimeout());
         connection.setRequestMethod("GET");
+        connection.setRequestProperty("Content-Type", mForm.encoding() + ";charset=utf-8");
         connection.setDoInput(true);
         return connection;
     }
