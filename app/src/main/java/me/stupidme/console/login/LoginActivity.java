@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import me.stupidme.console.main.MainActivity;
 import me.stupidme.console.R;
 import me.stupidme.console.account.Account;
 import me.stupidme.console.account.AccountManagerImpl;
+import me.stupidme.console.main.MainActivity;
 import me.stupidme.console.utils.UserNameHistory;
 
 public class LoginActivity extends AppCompatActivity {
@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
-        }, new LoginModelImpl());
+        });
     }
 
     private void attemptLogin() {
