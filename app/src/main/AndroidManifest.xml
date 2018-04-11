@@ -30,6 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".account.UserInfoProvider"
+            android:authorities="me.stupidme.console.USERINFO_PROVIDER"
+            android:permission="me.stupidme.console.PROVIDER"
+            android:process=":provider" />
     </application>
 
 </manifest>
