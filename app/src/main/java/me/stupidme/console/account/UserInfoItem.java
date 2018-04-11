@@ -29,4 +29,9 @@ public class UserInfoItem implements PostForm {
         map.put("password", password);
         return map;
     }
+
+    @Override
+    public String encoding() {
+        return "application/x-www-form-urlencoded";
+    }
 }

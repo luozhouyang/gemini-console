@@ -5,7 +5,5 @@ package me.stupidme.stupidhttp;
  */
 public interface EncodingForm {
 
-    default String encoding() {
-        return "application/x-www-form-urlencoded";
-    }
+    String encoding();
 }
