@@ -3,9 +3,12 @@ package me.stupidme.console.login;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -23,14 +26,14 @@ import java.util.List;
 import java.util.Set;
 
 import me.stupidme.console.R;
-import me.stupidme.console.account.Account;
-import me.stupidme.console.account.AccountManagerImpl;
+import me.stupidme.console.account.UserInfoProvider;
 import me.stupidme.console.main.MainActivity;
 import me.stupidme.console.utils.UserNameHistory;
 
 public class LoginActivity extends AppCompatActivity {
 
     private AutoCompleteTextView mUserNameView;
+    private TextInputEditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -56,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mEmailView = findViewById(R.id.email);
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
@@ -68,16 +72,16 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        mPresenter = new LoginPresenterImpl(new LoginView() {
+        mPresenter = new LoginPresenter(new LoginView() {
             @Override
             public void loginSuccess() {
                 String username = mUserNameView.getText().toString();
+                String email = mEmailView.getText().toString();
                 String password = mPasswordView.getText().toString();
                 UserNameHistory.getInstance()
                         .addUserName(username)
                         .commit(LoginActivity.this);
-                AccountManagerImpl.getInstance().setAccount(LoginActivity.this,
-                        new Account(username, password));
+                saveUserInfo(username, email, password);
                 showProgress(false);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -93,14 +97,25 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void saveUserInfo(String username, String email, String password) {
+        Uri uri = UserInfoProvider.USER_INFO_URI;
+        ContentValues values = new ContentValues(3);
+        values.put("username", username);
+        values.put("email", email);
+        values.put("password", password);
+        getContentResolver().insert(uri, values);
+    }
+
     private void attemptLogin() {
 
         // Reset errors.
         mUserNameView.setError(null);
         mPasswordView.setError(null);
+        mEmailView.setError(null);
 
         // Store values at the time of the login attempt.
         String username = mUserNameView.getText().toString();
+        String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -114,13 +129,13 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(username)) {
-            mUserNameView.setError(getString(R.string.error_field_required));
-            focusView = mUserNameView;
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(username)) {
-            mUserNameView.setError(getString(R.string.error_invalid_username));
-            focusView = mUserNameView;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_username));
+            focusView = mEmailView;
             cancel = true;
         }
 
@@ -132,13 +147,12 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            //TODO(luozhouyang) do not request login again if a previous login request is running
-            mPresenter.login(username, password);
+            mPresenter.login(username, email, password);
         }
     }
 
-    private boolean isEmailValid(String username) {
-        return username.length() > 4;
+    private boolean isEmailValid(String email) {
+        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
