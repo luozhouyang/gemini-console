@@ -35,7 +35,7 @@ public class LoginFragment extends BaseFragment {
             public void onException(Exception e) {
                 showProgress(false);
                 if (mListener != null) {
-                    mListener.onFailed(e);
+                    mListener.onLoginFailed(e);
                 }
             }
 
@@ -43,7 +43,7 @@ public class LoginFragment extends BaseFragment {
             public void onSuccess(String response) {
                 showProgress(false);
                 if (mListener != null) {
-                    mListener.onSuccess();
+                    mListener.onLoginSuccess();
                 }
             }
         };
@@ -69,8 +69,8 @@ public class LoginFragment extends BaseFragment {
 
     public interface OnLoginListener {
 
-        void onSuccess();
+        void onLoginSuccess();
 
-        void onFailed(Exception e);
+        void onLoginFailed(Exception e);
     }
 }
