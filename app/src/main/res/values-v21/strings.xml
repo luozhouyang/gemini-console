@@ -24,4 +24,5 @@
     <string name="activity_main_bottom_item_text_python">Python</string>
     <string name="Console">Console</string>
     <string name="email">Email</string>
+    <string name="action_sign_up">Sign Up</string>
 </resources>

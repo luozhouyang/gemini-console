@@ -23,4 +23,5 @@
     <string name="activity_main_bottom_item_text_python">Python</string>
     <string name="Console">Console</string>
     <string name="email">邮箱</string>
+    <string name="action_sign_up">注册</string>
 </resources>
