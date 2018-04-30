@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import me.stupidme.console.R;
+import me.stupidme.console.ServerConfigure;
 import me.stupidme.console.account.UserInfoItem;
 import me.stupidme.console.account.UserInfoProvider;
 import me.stupidme.console.main.MainActivity;
@@ -55,7 +56,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         UserInfoItem infoItem = new UserInfoItem(name, email, password);
-        Request request = new PostRequest("http://127.0.0.1:8080", infoItem);
+        Request request = new PostRequest(ServerConfigure.getLoginURL(), infoItem);
         RequestCallback callback = new RequestCallback() {
             @Override
             public void onException(Exception e) {

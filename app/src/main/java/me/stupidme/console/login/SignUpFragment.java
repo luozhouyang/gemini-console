@@ -3,6 +3,7 @@ package me.stupidme.console.login;
 import android.content.Context;
 
 import me.stupidme.console.R;
+import me.stupidme.console.ServerConfigure;
 import me.stupidme.console.account.UserInfoItem;
 import me.stupidme.stupidhttp.PostRequest;
 import me.stupidme.stupidhttp.Request;
@@ -27,7 +28,8 @@ public class SignUpFragment extends BaseFragment {
         String name = mUserNameView.getText().toString();
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-        Request request = new PostRequest("http:127.0.0.1:8080/signup", new UserInfoItem(name, email, password));
+        Request request = new PostRequest(ServerConfigure.getSignUpURL(),
+                new UserInfoItem(name, email, password));
         RequestCallback callback = new RequestCallback() {
             @Override
             public void onException(Exception e) {
